@@ -46,6 +46,11 @@ devopsy @pr-12 --destroy         # and gone with it
 `DEVOPSY_SERVER_STAGING` (or `devopsy @<server>:staging`) puts staging on another server. Without a wildcard domain or `DEVOPSY_DOMAINS`, a
 released environment has no host at all: `deploy` says so.
 
+`pr-*` environments are children of `prod` (`parent: prod`): their first
+release clones prod's data, and `devopsy @pr-12 --clone` clones it again.
+whoami has no data, so a clone copies nothing and only shows the flow;
+devopsy-template-drupal11 clones files and a database.
+
 The hosts come from `.devopsy/capabilities/env/compute`, which devopsy runs
 before every command: `SITE_HOST_RULE` (the router's rule) and `SITE_URL`,
 from the compose project name, the imported wildcard domain and
