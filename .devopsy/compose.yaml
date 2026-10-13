@@ -23,11 +23,6 @@ services:
       # letsencrypt1 (HTTP-01, the default), acmedns or cloudflare (DNS-01),
       # per target, in config.yaml.
       - traefik.http.routers.${COMPOSE_PROJECT_NAME:-app}.tls.certresolver=${CERTRESOLVER:-letsencrypt1}
-      # While the container restarts or is unhealthy, the server's Traefik
-      # holds requests instead of answering 502 or 503 (its hold plugin,
-      # up to the server's limit). Needs a devopsy-template-traefik with
-      # the plugin: Traefik drops a router whose middleware is missing.
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-app}.middlewares=hold@file
     networks: [default, traefik]
 
 networks:
