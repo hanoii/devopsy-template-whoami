@@ -17,9 +17,9 @@ environments:
   prod: {}
   staging: {}
   # Pull request environments (@pr-123), children of prod: the smallest
-  # example of clones. whoami has no mnt, so a clone copies nothing and
+  # example of syncs. whoami has no mnt, so a sync copies nothing and
   # only exercises the flow (devopsy-cli's README, "Parent environments
-  # and clones").
+  # and syncs").
   "pr-*":
     parent: prod
     releases: {keep: 1}
