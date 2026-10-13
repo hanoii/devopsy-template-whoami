@@ -8,7 +8,7 @@ targets, releases, domains and certificates, or as a starting point.
 ## Using this template
 
 A starting point to own, not a dependency: start a project from it on
-GitHub ("Use this template"), or clone it and keep this repository as a
+GitHub ("Use this template"), or sync it and keep this repository as a
 remote (`upstream`) to pull its changes when you choose. Nothing updates
 your copy, or what runs on your servers, but your own release.
 
@@ -47,9 +47,9 @@ devopsy @pr-12 --destroy         # and gone with it
 released environment has no host at all: `deploy` says so.
 
 `pr-*` environments are children of `prod` (`parent: prod`): their first
-release clones prod's data, and `devopsy @pr-12 --clone` clones it again.
-whoami has no data, so a clone copies nothing and only shows the flow;
-devopsy-template-drupal11 clones files and a database.
+release syncs prod's data, and `devopsy @pr-12 --sync` syncs it again.
+whoami has no data, so a sync copies nothing and only shows the flow;
+devopsy-template-drupal11 syncs files and a database.
 
 The hosts come from `.devopsy/capabilities/env/compute`, which devopsy runs
 before every command: `SITE_HOST_RULE` (the router's rule) and `SITE_URL`,
