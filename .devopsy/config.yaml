@@ -14,10 +14,7 @@ defaults:
   rollback: deploy
   destroy: destroy
 environments:
-  prod:
-    env:
-      DEVOPSY_DOMAINS: whoami.example.org
-      CERTRESOLVER: acmedns       # to get the certificate before switching DNS
+  prod: {}
   staging: {}
   # Pull request environments (@pr-123), children of prod: the smallest
   # example of clones. whoami has no mnt, so a clone copies nothing and
