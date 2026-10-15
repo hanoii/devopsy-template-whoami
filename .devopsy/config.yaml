@@ -8,13 +8,18 @@
 # devopsy.import label); override it, or set it empty for none, with:
 #   devopsy @prod --vars set --show DEVOPSY_WILDCARD_DOMAIN
 project: whoami
+secrets: [SITE_BASIC_AUTH, SITE_BASIC_AUTH_USERS]
 defaults:
   mode: image
   release: deploy
   rollback: deploy
   destroy: destroy
 environments:
-  prod: {}
+  # inherit: SITE_BASIC_AUTH, so pr-* copies of a closed prod stay
+  # closed, with its login (devopsy-cli's README, "Parent environments
+  # and syncs"). Unset on prod, nothing is written.
+  prod:
+    inherit: [SITE_BASIC_AUTH]
   staging: {}
   # Pull request environments (@pr-123), children of prod: the smallest
   # example of syncs. whoami has no mnt, so a sync copies nothing and
