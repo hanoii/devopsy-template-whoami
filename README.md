@@ -105,7 +105,7 @@ Locally, without a wildcard domain, the host is `whoami.localhost` (the
 config's project name), served by a local devopsy-template-traefik:
 
 ```sh
-devopsy up -d
+devopsy --release
 ```
 
 ## License
