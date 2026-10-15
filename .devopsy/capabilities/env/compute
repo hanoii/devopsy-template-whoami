@@ -7,11 +7,31 @@
 # DEVOPSY_DOMAINS (space or comma separated):
 #   SITE_HOST_RULE  a Traefik rule for every host, for the router's labels
 #   SITE_URL        https://<the first: the custom domain, else the wildcard>
+# And from SITE_BASIC_AUTH (user:password), for HTTP basic auth on the
+# router (compose.yaml), empty while it is unset or empty:
+#   SITE_BASIC_AUTH_USERS  user:hash, for the basicauth middleware
+#   SITE_MIDDLEWARES       the router's middlewares (that one)
 # Locally, without a wildcard domain, the wildcard host is
 # <name>.localhost; in a release without one (DEVOPSY_TARGET is set) there
 # is none, and a release without DEVOPSY_DOMAINS has no host at all.
 set -euf
 name=${COMPOSE_PROJECT_NAME:?}
+# Traefik takes no plain passwords: an apr1 hash, salted from the project
+# and the login, so it only changes (and a release recreates the
+# container) when they do.
+if [ -n "${SITE_BASIC_AUTH:-}" ]; then
+  case $SITE_BASIC_AUTH in
+    [!:]*:?*) ;;
+    *)
+      echo "SITE_BASIC_AUTH must be user:password" >&2
+      exit 1
+      ;;
+  esac
+  salt=$(printf '%s:%s' "$name" "$SITE_BASIC_AUTH" | openssl sha256 -r | cut -c1-8)
+  hash=$(printf '%s\n' "${SITE_BASIC_AUTH#*:}" | openssl passwd -apr1 -salt "$salt" -stdin)
+  echo "SITE_BASIC_AUTH_USERS='${SITE_BASIC_AUTH%%:*}:$hash'"
+  echo "SITE_MIDDLEWARES='$name-auth'"
+fi
 wildcard=
 if [ -n "${DEVOPSY_WILDCARD_DOMAIN:-}" ]; then
   wildcard=$name.$DEVOPSY_WILDCARD_DOMAIN

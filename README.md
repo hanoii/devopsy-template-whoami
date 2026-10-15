@@ -79,6 +79,25 @@ environments:
   gets the certificate while the domain still points elsewhere; then switch
   DNS.
 
+## Basic auth
+
+Set `SITE_BASIC_AUTH=user:password` in `.devopsy/.env` (on servers
+`devopsy @prod --vars set SITE_BASIC_AUTH`, then a release) and Traefik
+asks for it on every request, with a `basicauth` middleware on the router.
+Traefik takes no plain passwords: `.devopsy/capabilities/env/compute`
+hashes it (apr1, with `openssl`) into `SITE_BASIC_AUTH_USERS`, and the
+router names the middleware through `SITE_MIDDLEWARES`. Unset or empty,
+the site is open. `pr-*` environments inherit prod's, so copies of a closed
+site stay closed.
+
+The capability runs wherever devopsy does, so `openssl` must be there
+too: macOS ships it, and devopsy-server installs it on servers.
+
+It guards the router, not the container: other containers on the `traefik`
+network reach it directly (devopsy-template-traefik's README). The
+devopsy-template-drupal11 recipe checks it in the application instead, in
+Caddy.
+
 ## Locally
 
 Locally, without a wildcard domain, the host is `whoami.localhost` (the
