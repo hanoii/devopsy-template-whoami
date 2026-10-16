@@ -13,7 +13,6 @@ defaults:
   mode: image
   release: deploy
   rollback: deploy
-  destroy: destroy
 environments:
   # inherit: SITE_BASIC_AUTH, so pr-* copies of a closed prod stay
   # closed, with its login (devopsy-cli's README, "Parent environments
