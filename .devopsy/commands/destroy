@@ -1,7 +1,0 @@
-#!/bin/sh
-## Description: Stop and remove the containers and volumes (run on the server by --destroy)
-# The environments' destroy step (config.yaml), run on the server by
-# `devopsy @<target> --destroy` before devopsy removes the directory. whoami
-# keeps no data in mnt/.
-set -eu
-devopsy down --volumes --remove-orphans
