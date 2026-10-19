@@ -8,7 +8,7 @@ targets, releases, domains and certificates, or as a starting point.
 ## Using this template
 
 A starting point to own, not a dependency: start a project from it on
-GitHub ("Use this template"), or sync it and keep this repository as a
+GitHub ("Use this template"), or clone it and keep this repository as a
 remote (`upstream`) to pull its changes when you choose. Nothing updates
 your copy, or what runs on your servers, but your own release.
 
@@ -21,7 +21,7 @@ environment:
 echo DEVOPSY_SERVER=devopsy@203.0.113.10 >> .devopsy/.env
 ```
 
-Each environment also gets `<project>-<environment>.<server's wildcard
+Each environment gets a URL, `<project>-<environment>.<server's wildcard
 domain>` (its compose project name, like `whoami-prod`), whose domain each
 release imports from the server's proxy (devopsy-template-traefik), through the
 `devopsy.import` label in `compose.yaml`: a release fails while no proxy
@@ -41,10 +41,11 @@ devopsy @pr-12 --destroy         # and gone with it
 ```
 
 `.devopsy/config.yaml` names the project (`whoami`) and defines `prod`,
-`staging` and `pr-*` environments, each in its own directory on the server
-(`whoami/prod`, under its release root), so its own containers and URL.
-`DEVOPSY_SERVER_STAGING` (or `devopsy @<server>:staging`) puts staging on another server. Without a wildcard domain or `DEVOPSY_DOMAINS`, a
-released environment has no host at all: `deploy` says so.
+`staging`, `pr-*` and `demo-*` environments, each in its own directory on
+the server (`whoami/prod`, under its release root), so its own containers
+and URL. `DEVOPSY_SERVER_STAGING` (or `devopsy @<server>:staging`) puts
+staging on another server. Without a wildcard domain or `DEVOPSY_DOMAINS`,
+a released environment has no host at all: `deploy` says so.
 
 `pr-*` environments are children of `prod` (`parent: prod`): their first
 release syncs prod's data, and `devopsy @pr-12 --sync` syncs it again.
@@ -95,9 +96,8 @@ The capability runs wherever devopsy does, so `openssl` must be there
 too: macOS ships it, and devopsy-server installs it on servers.
 
 It guards the router, not the container: other containers on the `traefik`
-network reach it directly (devopsy-template-traefik's README). The
-devopsy-template-drupal11 recipe checks it in the application instead, in
-Caddy.
+network reach it directly (devopsy-template-traefik's README).
+devopsy-template-drupal11 checks it in the application instead, in Caddy.
 
 ## Locally
 
