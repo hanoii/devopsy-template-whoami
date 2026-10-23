@@ -2,12 +2,25 @@
 # headers included, which makes routing, TLS and client IPs easy to check.
 services:
   web:
-    image: traefik/whoami
+    # An exact version, never latest: a release runs what the file says, and
+    # an upgrade is a commit.
+    image: traefik/whoami:v1.12.0
     restart: unless-stopped
-    # Not root, not the deploy user (1000): see "Conventions" in the devopsy
-    # workspace README.
+    # Hardening checklist, for this service and the ones you add:
+    # - a fixed non-root UID, not the deploy user (1000): 10001, shared by
+    #   all projects;
+    # - a read-only root filesystem, with tmpfs or a mnt entry for what must
+    #   be written;
+    # - cap_drop ALL, adding back only a capability a stated reason needs
+    #   (none here: Docker lets any process bind port 80);
+    # - no-new-privileges, so nothing gains privilege through setuid files;
+    # - in images you build, no setuid binaries and no file capabilities
+    #   the service does not need.
     user: "10001:10001"
     read_only: true
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
     labels:
       # Each release gets the server's wildcard domain from its proxy
       # (devopsy-template-traefik exports it), for <project>-<environment>.<domain>. Without a
