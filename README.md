@@ -21,17 +21,17 @@ environment:
 echo DEVOPSY_SERVER=devopsy@203.0.113.10 >> .devopsy/.env
 ```
 
-Each environment gets a URL, `<project>-<environment>.<server's wildcard
+Each environment gets a URL, `<project>-<environment>.<server's base
 domain>` (its compose project name, like `whoami-prod`), whose domain each
 release imports from the server's proxy (devopsy-template-traefik), through the
 `devopsy.import` label in `compose.yaml`: a release fails while no proxy
 runs. The release says what it imported; `devopsy @prod --debug imports`
 shows it later, and whether the proxy has changed it since. Override it,
 or set it empty for none, per target: `devopsy @prod --vars set --show
-DEVOPSY_WILDCARD_DOMAIN`.
+PROXY_BASE_DOMAIN`.
 
 ```sh
-devopsy @prod --release          # runs deploy, prints https://whoami-prod.<server's wildcard domain>
+devopsy @prod --release          # runs deploy, prints https://whoami-prod.<server's base domain>
 devopsy @<server>-traefik domains whoami-prod   # DNS, challenge and certificate per host, and what next
 devopsy @prod logs -f web
 devopsy @prod --releases
@@ -44,7 +44,7 @@ devopsy @pr-12 --destroy         # and gone with it
 `staging`, `pr-*` and `demo-*` environments, each in its own directory on
 the server (`whoami/prod`, under its release root), so its own containers
 and URL. `DEVOPSY_SERVER_STAGING` (or `devopsy @<server>:staging`) puts
-staging on another server. Without a wildcard domain or `DEVOPSY_DOMAINS`,
+staging on another server. Without a base domain or `PROXY_DOMAINS`,
 a released environment has no host at all: `deploy` says so.
 
 `pr-*` environments are children of `prod` (`parent: prod`): their first
@@ -54,8 +54,8 @@ devopsy-template-drupal11 syncs files and a database.
 
 The hosts come from `.devopsy/capabilities/env/compute`, which devopsy runs
 before every command: `SITE_HOST_RULE` (the router's rule) and `SITE_URL`,
-from the compose project name, the imported wildcard domain and
-`DEVOPSY_DOMAINS`. `devopsy --env` shows them. Print more there if your
+from the compose project name, the imported base domain and
+`PROXY_DOMAINS`. `devopsy --env` shows them. Print more there if your
 project needs them.
 
 ## A custom domain
@@ -66,19 +66,29 @@ In `config.yaml`, give the target its domains and release again:
 environments:
   prod:
     env:
-      DEVOPSY_DOMAINS: whoami.example.org
+      PROXY_DOMAINS: whoami.example.org
 ```
 
-- **Default, HTTP-01:** point the domain at the server (an A record, or a
-  CNAME to the wildcard URL), then release. `devopsy @<server>-traefik
-  domains whoami-prod` (devopsy-template-traefik) shows when it is live; if the
-  certificate came too early, `--retry`. `devopsy --probe whoami.example.org`
-  checks it from your machine.
-- **Before switching DNS, acme-dns:** add `CERTRESOLVER: acmedns`, release,
-  and `devopsy @<server>-traefik domains whoami-prod` prints the
-  `_acme-challenge` CNAME to create. Once it exists, the same with `--retry`
-  gets the certificate while the domain still points elsewhere; then switch
-  DNS.
+The certificate comes from the server's default resolver
+(devopsy-template-traefik's own `PROXY_CERTRESOLVER`, HTTP-01 unless its
+setup chose otherwise):
+
+- **HTTP-01 (`le-http01`):** point the domain at the server (an A record,
+  or a CNAME to the wildcard URL), then release. `devopsy
+  @<server>-traefik domains whoami-prod` (devopsy-template-traefik) shows
+  when it is live; if the certificate came too early, `--retry`. `devopsy
+  --probe whoami.example.org` checks it from your machine.
+- **Before switching DNS, on a server whose default is HTTP-01:** name a
+  DNS-01 resolver for this target, `PROXY_CERTRESOLVER:
+  le-dns01-selfhosted` (the server's acme-dns), release, and `devopsy
+  @<server>-traefik domains whoami-prod` prints the `_acme-challenge`
+  CNAME to create. Once it exists, the same with `--retry` gets the
+  certificate while the domain still points elsewhere; then switch DNS.
+  `le-dns01-cloudflare` works likewise through the server's Cloudflare
+  token.
+
+`PROXY_DOMAINS` takes host names only, never a wildcard (`*.example.org`):
+Traefik's `Host()` matches names literally.
 
 ## Basic auth
 
@@ -101,7 +111,7 @@ devopsy-template-drupal11 checks it in the application instead, in Caddy.
 
 ## Locally
 
-Locally, without a wildcard domain, the host is `whoami.localhost` (the
+Locally, without a base domain, the host is `whoami.localhost` (the
 config's project name), served by a local devopsy-template-traefik:
 
 ```sh
