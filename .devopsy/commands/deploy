@@ -5,4 +5,4 @@
 # the image before the release went live (image mode).
 set -eu
 devopsy up -d --wait --remove-orphans
-echo "deploy: ${SITE_URL:-no URL: no wildcard domain or DEVOPSY_DOMAINS}" >&2
+echo "deploy: ${SITE_URL:-no URL: no base domain or PROXY_DOMAINS}" >&2
