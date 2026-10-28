@@ -39,6 +39,11 @@ services:
       # le-dns01-cloudflare). Unset, there is no label at all (compose
       # leaves an empty one): an empty resolver gets no certificate.
       - ${PROXY_CERTRESOLVER:+traefik.http.routers.${COMPOSE_PROJECT_NAME:-app}.tls.certresolver=$PROXY_CERTRESOLVER}
+      # The entrypoints, only when the target names them: tunnel for a site
+      # behind a Cloudflare Tunnel on a server with direct sites too (then
+      # with PROXY_CERTRESOLVER unset: a router with a resolver never matches
+      # the tunnel's plain HTTP). Unset, no label: the server's default ones.
+      - ${PROXY_ENTRYPOINTS:+traefik.http.routers.${COMPOSE_PROJECT_NAME:-app}.entrypoints=$PROXY_ENTRYPOINTS}
       # HTTP basic auth while SITE_BASIC_AUTH (user:password) is set,
       # hashed by capabilities/env/compute. Unset, both are empty: no
       # middleware on the router, and Traefik skips one without users.
