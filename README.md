@@ -93,7 +93,7 @@ Traefik's `Host()` matches names literally.
 ## Basic auth
 
 Set `SITE_BASIC_AUTH=user:password` in `.devopsy/.env` (on servers
-`devopsy @prod --vars set SITE_BASIC_AUTH`, then `devopsy @prod reload`
+`devopsy @prod --vars set SITE_BASIC_AUTH`, then `devopsy @prod --reload`
 or a release) and Traefik
 asks for it on every request, with a `basicauth` middleware on the router.
 Traefik takes no plain passwords: `.devopsy/capabilities/env/compute`
