@@ -44,10 +44,13 @@ services:
       # with PROXY_CERTRESOLVER unset: a router with a resolver never matches
       # the tunnel's plain HTTP). Unset, no label: the server's default ones.
       - ${PROXY_ENTRYPOINTS:+traefik.http.routers.${COMPOSE_PROJECT_NAME:-app}.entrypoints=$PROXY_ENTRYPOINTS}
+      # hold@file: the server's Traefik (devopsy-template-traefik) holds
+      # visitors through a stop of this container and sends them on once
+      # it answers, instead of its 502 or 404; drop it to opt out. Then
       # HTTP basic auth while SITE_BASIC_AUTH (user:password) is set,
       # hashed by capabilities/env/compute. Unset, both are empty: no
-      # middleware on the router, and Traefik skips one without users.
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-app}.middlewares=${SITE_MIDDLEWARES:-}
+      # such middleware, and Traefik skips one without users.
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-app}.middlewares=hold@file${SITE_MIDDLEWARES:+,$SITE_MIDDLEWARES}
       - traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-app}-auth.basicauth.users=${SITE_BASIC_AUTH_USERS:-}
     networks: [default, traefik]
 

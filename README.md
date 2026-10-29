@@ -98,6 +98,15 @@ with `PROXY_CERTRESOLVER` unset (TLS ends at Cloudflare's edge, and a
 router with a resolver never matches the tunnel's plain HTTP): it then
 is not served on the server's ports 80 and 443.
 
+## Through a stop
+
+The router names `hold@file`, the server's Traefik's hold
+(devopsy-template-traefik's README): while the container stops and starts
+again (a release, `devopsy @prod restart`), visitors wait instead of
+getting a 502 or a 404, and are sent on to the same URL once it answers.
+It needs a Traefik that has it: release the server's Traefik first. Drop
+it from the router's `middlewares` label to opt out.
+
 ## Basic auth
 
 Set `SITE_BASIC_AUTH=user:password` in `.devopsy/.env` (on servers
