@@ -90,6 +90,14 @@ setup chose otherwise):
 `PROXY_DOMAINS` takes host names only, never a wildcard (`*.example.org`):
 Traefik's `Host()` matches names literally.
 
+Behind a Cloudflare Tunnel (devopsy-template-traefik's "Behind a
+Cloudflare Tunnel"), nothing changes on a server whose sites are all
+tunneled. On a server with direct sites too, a tunneled one names the
+tunnel's entrypoint, `PROXY_ENTRYPOINTS: tunnel` in its target's `env`,
+with `PROXY_CERTRESOLVER` unset (TLS ends at Cloudflare's edge, and a
+router with a resolver never matches the tunnel's plain HTTP): it then
+is not served on the server's ports 80 and 443.
+
 ## Basic auth
 
 Set `SITE_BASIC_AUTH=user:password` in `.devopsy/.env` (on servers
