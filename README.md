@@ -96,7 +96,7 @@ tunneled. On a server with direct sites too, a tunneled one names the
 tunnel's entrypoint, `PROXY_ENTRYPOINTS: tunnel` in its target's `env`,
 with `PROXY_CERTRESOLVER` unset (TLS ends at Cloudflare's edge, and a
 router with a resolver never matches the tunnel's plain HTTP): it then
-answers nothing on the server's ports 80 and 443.
+is not served on the server's ports 80 and 443.
 
 ## Basic auth
 
