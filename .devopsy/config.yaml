@@ -1,4 +1,4 @@
-# devopsy config: see devopsy-cli's README, "Servers". Committed: no
+# devopsy config: see devopsy-cli's docs/config.md. Committed: no
 # secrets and no servers here. The server comes from the address
 # (devopsy @vm1:prod), or DEVOPSY_SERVER (or DEVOPSY_SERVER_<ENVIRONMENT>) in
 # .devopsy/.env or the environment, like DEVOPSY_SERVER=devopsy@203.0.113.10.
@@ -15,15 +15,14 @@ defaults:
   rollback: deploy
 environments:
   # inherit: SITE_BASIC_AUTH, so pr-* copies of a closed prod stay
-  # closed, with its login (devopsy-cli's README, "Parent environments
-  # and syncs"). Unset on prod, nothing is written.
+  # closed, with its login (devopsy-cli's docs/syncs.md). Unset on prod,
+  # nothing is written.
   prod:
     inherit: [SITE_BASIC_AUTH]
   staging: {}
   # Pull request environments (@pr-123), children of prod: the smallest
   # example of syncs. whoami has no mnt, so a sync copies nothing and
-  # only exercises the flow (devopsy-cli's README, "Parent environments
-  # and syncs").
+  # only exercises the flow (devopsy-cli's docs/syncs.md).
   "pr-*":
     parent: prod
     releases: {keep: 1}
