@@ -43,9 +43,9 @@ devopsy @pr-12 --destroy         # removes it
 ```
 
 `.devopsy/config.yaml` names the project (`whoami`) and defines the
-`prod`, `staging`, `pr-*` and `demo-*` environments. Each has a directory
-on the server (`whoami/prod`, under its release root), containers and a
-URL. `DEVOPSY_SERVER_STAGING` (or `devopsy
+`prod`, `staging`, `pr-*` and `demo-*` environments. Each has its own
+directory on the server (`whoami/prod`, under its release root), its own
+containers and its own URL. `DEVOPSY_SERVER_STAGING` (or `devopsy
 @<server>:staging`) puts staging on another server. Without a base domain
 or `PROXY_DOMAINS`, a released environment has no host, and `deploy`
 prints that it has no URL.
@@ -123,7 +123,8 @@ or a release. Traefik then asks for it on every request, through a
 Traefik takes no plain passwords. `.devopsy/capabilities/env/compute`
 hashes the password (apr1, with `openssl`) into `SITE_BASIC_AUTH_USERS`,
 and the router names the middleware through `SITE_MIDDLEWARES`. Unset or
-empty, the site is open. `pr-*` environments inherit prod's value.
+empty, the site is open. `pr-*` environments inherit prod's value, so copies of a closed site
+stay closed.
 
 The capability runs wherever devopsy does, so `openssl` must be there too.
 macOS ships it, and devopsy-server installs it on servers.
