@@ -54,11 +54,11 @@ services:
       # such middleware, and Traefik skips one without users.
       - traefik.http.routers.${COMPOSE_PROJECT_NAME:-app}.middlewares=hold@file${SITE_MIDDLEWARES:+,$SITE_MIDDLEWARES}
       - traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-app}-auth.basicauth.users=${SITE_BASIC_AUTH_USERS:-}
-    networks: [default, proxy]
+    networks: [private, proxy]
 
 networks:
   # A service only here has no way out.
-  default:
+  private:
     internal: true
   proxy:
     name: ${COMPOSE_PROJECT_NAME:-whoami}_proxy
