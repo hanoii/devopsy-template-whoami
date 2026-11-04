@@ -1,0 +1,13 @@
+#!/bin/sh
+# The status capability (devopsy-cli's docs/capabilities.md): what
+# `devopsy --status` adds after the containers, with the project's
+# environment loaded. One fact per line.
+set -eu
+
+if [ -n "${SITE_URLS:-}" ]; then
+  for url in $SITE_URLS; do
+    echo "url          $url"
+  done
+else
+  echo "url          no URL: no base domain or PROXY_DOMAINS"
+fi

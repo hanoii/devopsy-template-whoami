@@ -57,9 +57,10 @@ devopsy-template-drupal11 syncs files and a database.
 
 The hosts come from `.devopsy/capabilities/env/compute`, which devopsy
 runs before every command. It computes `SITE_HOST_RULE` (the router's
-rule) and `SITE_URL` from the compose project name, the imported base
-domain and `PROXY_DOMAINS`, and `devopsy --env` shows them. Print more
-there if your project needs them.
+rule), `SITE_URL` and `SITE_URLS` from the compose project name, the
+imported base domain and `PROXY_DOMAINS`, and `devopsy --env` shows them.
+Print more there if your project needs them. `devopsy --status` lists
+every URL (`.devopsy/capabilities/status/show`).
 
 ## A custom domain
 

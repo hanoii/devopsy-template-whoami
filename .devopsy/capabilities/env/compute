@@ -7,6 +7,7 @@
 # PROXY_DOMAINS (space or comma separated):
 #   SITE_HOST_RULE  a Traefik rule for every host, for the router's labels
 #   SITE_URL        https://<the first: the custom domain, else the wildcard>
+#   SITE_URLS       https://<host> for every host, space separated
 # And from SITE_BASIC_AUTH (user:password), for HTTP basic auth on the
 # router (compose.yaml), empty while it is unset or empty:
 #   SITE_BASIC_AUTH_USERS  user:hash, for the basicauth middleware
@@ -58,8 +59,11 @@ for h in $(printf '%s %s' "${PROXY_DOMAINS:-}" "$wildcard" | tr ',A-Z' ' a-z'); 
 done
 [ -n "$hosts" ] || exit 0
 rule=
+urls=
 for h in $hosts; do
   rule="${rule:+$rule || }Host(\`$h\`)"
+  urls="${urls:+$urls }https://$h"
 done
 echo "SITE_HOST_RULE='$rule'"
 echo "SITE_URL='https://${hosts%% *}'"
+echo "SITE_URLS='$urls'"
