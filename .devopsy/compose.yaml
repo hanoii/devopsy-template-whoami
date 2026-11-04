@@ -27,6 +27,8 @@ services:
       # proxy running the release fails: the project expects one.
       - devopsy.import.PROXY_BASE_DOMAIN=proxy/BASE_DOMAIN
       - traefik.enable=true
+      # The network Traefik reaches this on, which it joins by itself.
+      - traefik.docker.network=${COMPOSE_PROJECT_NAME:-whoami}_proxy
       # SITE_HOST_RULE: the target's PROXY_DOMAINS plus
       # <compose project>.<PROXY_BASE_DOMAIN>, computed by
       # capabilities/env/compute. The fallback, for plain docker compose, is
@@ -52,9 +54,11 @@ services:
       # such middleware, and Traefik skips one without users.
       - traefik.http.routers.${COMPOSE_PROJECT_NAME:-app}.middlewares=hold@file${SITE_MIDDLEWARES:+,$SITE_MIDDLEWARES}
       - traefik.http.middlewares.${COMPOSE_PROJECT_NAME:-app}-auth.basicauth.users=${SITE_BASIC_AUTH_USERS:-}
-    networks: [default, traefik]
+    networks: [default, proxy]
 
 networks:
-  traefik:
-    name: traefik
-    external: true
+  # A service only here has no way out.
+  default:
+    internal: true
+  proxy:
+    name: ${COMPOSE_PROJECT_NAME:-whoami}_proxy
