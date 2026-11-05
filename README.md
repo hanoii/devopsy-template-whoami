@@ -111,7 +111,8 @@ sites](https://github.com/hanoii/devopsy-template-traefik/blob/main/docs/hold.md
 While the container stops and starts again (a release, `devopsy @prod
 restart`), visitors wait instead of getting a 502 or a 404, and are sent
 on to the same URL once the site is back. Release the server's Traefik
-first, since an older one has no hold. To opt out, drop `hold@file` from
+first, since an older one has no hold and does not join this project's
+network. To opt out, drop `hold@file` from
 the router's `middlewares` label.
 
 ## Basic auth
@@ -130,10 +131,11 @@ stay closed.
 The capability runs wherever devopsy does, so `openssl` must be there too.
 macOS ships it, and devopsy-server installs it on servers.
 
-Basic auth guards the router, not the container. Other containers on the
-`traefik` network reach it directly (devopsy-template-traefik's [Routing
-a
-project](https://github.com/hanoii/devopsy-template-traefik#routing-a-project)).
+Basic auth guards the router, not the container. Only Traefik shares a
+network with it, and other projects reach no container of this one
+(devopsy-template-traefik's [Routing a
+project](https://github.com/hanoii/devopsy-template-traefik#routing-a-project)),
+so it matters only against what runs on this project's own networks.
 devopsy-template-drupal11 checks it in the application instead, in Caddy.
 
 ## Locally
