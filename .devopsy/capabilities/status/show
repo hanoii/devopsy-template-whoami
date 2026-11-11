@@ -2,13 +2,14 @@
 # The status capability (devopsy-cli's docs/capabilities.md): what
 # `devopsy --status` adds after the containers, with the project's
 # environment loaded. One fact per line, `<level>\t<key>\t<value>`, its
-# level info or warning (which makes --status exit 3), then a command to
-# copy when there is one; devopsy aligns and colors them.
+# level info, highlight (shown in bold) or warning (which makes --status
+# exit 3), then a command to copy when there is one; devopsy aligns and
+# colors them.
 set -eu
 
 if [ -n "${SITE_URLS:-}" ]; then
   for url in $SITE_URLS; do
-    printf 'info\turl\t%s\n' "$url"
+    printf 'highlight\turl\t%s\n' "$url"
   done
 else
   printf 'warning\turl\tno URL: no base domain or PROXY_DOMAINS\n'
