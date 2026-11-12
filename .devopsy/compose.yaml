@@ -6,9 +6,10 @@ services:
     image: traefik/whoami:v1.12
     restart: unless-stopped
     # Hardening checklist, for this service and the ones you add:
-    # - a fixed non-root UID, not the deploy user (1000, in the docker group:
-    #   an escape would land as root-equivalent): 10001, shared by all
-    #   projects;
+    # - its environment's own uid, DEVOPSY_UID, which devopsy gives every
+    #   environment on a server and no other environment's containers share,
+    #   so an escape reaches nothing of theirs through /proc; never the
+    #   deploy user's (in the docker group) nor root;
     # - a read-only root filesystem, with tmpfs or a mnt entry for what must
     #   be written;
     # - cap_drop ALL, adding back only a capability a stated reason needs
@@ -16,7 +17,7 @@ services:
     # - no-new-privileges, so nothing gains privilege through setuid files;
     # - in images you build, no setuid binaries and no file capabilities
     #   the service does not need.
-    user: "10001:10001"
+    user: "${DEVOPSY_UID:?}:${DEVOPSY_UID:?}"
     read_only: true
     cap_drop: [ALL]
     security_opt:
@@ -31,7 +32,7 @@ services:
       - traefik.docker.network=${COMPOSE_PROJECT_NAME:-whoami}_proxy
       # SITE_HOST_RULE: the target's PROXY_DOMAINS plus
       # <compose project>.<PROXY_BASE_DOMAIN>, computed by
-      # capabilities/env/compute. The fallback, for plain docker compose, is
+      # capabilities/env/compute. The fallback, for a run that leaves it unset, is
       # a HostRegexp: Traefik requests no certificate for it, so a target
       # without hosts logs no ACME errors.
       - traefik.http.routers.${COMPOSE_PROJECT_NAME:-app}.rule=${SITE_HOST_RULE:-HostRegexp(`^app\.localhost$`)}
