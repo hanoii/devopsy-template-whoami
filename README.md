@@ -81,7 +81,8 @@ With HTTP-01 (`le-http01`), point the domain at the server, with an A
 record or a CNAME to the wildcard URL, then release. `devopsy
 @<server>-traefik domains whoami-prod` (devopsy-template-traefik) shows
 when it is live; if the certificate came too early, add `--retry`.
-`devopsy --probe whoami.example.org` checks it from your machine.
+`devopsy --probe whoami.example.org` checks it from the operator's machine (the
+laptop or CI job that runs devopsy).
 
 To get the certificate before switching DNS, on a server whose default
 is HTTP-01, set a DNS-01 resolver for this target and release. With the
@@ -138,7 +139,7 @@ project](https://github.com/hanoii/devopsy-template-traefik#routing-a-project)),
 so it matters only against what runs on this project's own networks.
 devopsy-template-drupal11 checks it in the application instead, in Caddy.
 
-## Locally
+## Without a target
 
 Without a base domain, the host is `whoami.localhost` (the config's
 project name), served by a local devopsy-template-traefik:
