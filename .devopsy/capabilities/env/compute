@@ -12,7 +12,7 @@
 # router (compose.yaml), empty while it is unset or empty:
 #   SITE_BASIC_AUTH_USERS  user:hash, for the basicauth middleware
 #   SITE_MIDDLEWARES       the router's middlewares (that one)
-# Locally, without a base domain, the wildcard host is
+# Without a target or a base domain, the wildcard host is
 # <name>.localhost; in a release without one (DEVOPSY_TARGET is set) there
 # is none, and a release without PROXY_DOMAINS has no host at all.
 set -euf
